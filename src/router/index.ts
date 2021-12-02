@@ -1,9 +1,8 @@
 import { Router as WorktopRouter } from 'worktop';
 import { JSONResponse } from '../responses';
 
-import type { RouteParams, Promisable } from 'worktop';
-import type { Params, ServerRequest } from 'worktop/request';
-import type { Handler, ServerResponse } from './types';
+import type { Promisable } from 'worktop';
+import type { Handler, ServerRequest, ServerResponse, Params, RouteParams } from './types';
 
 export type ErrorHandler<Res extends ServerResponse, Req extends ServerRequest = ServerRequest> = (
   request: Req,
@@ -25,8 +24,8 @@ export class Router<Res extends ServerResponse, Req extends ServerRequest = Serv
    * @param path Request path or regex.
    * @param handler Request handler.
    */
-  public post<T extends RegExp>(path: T, handler: Handler<Params>): void;
-  public post<T extends string>(path: T, handler: Handler<RouteParams<T>>): void {
+  public post<T extends string>(path: T, handler: Handler<RouteParams<T>>): void;
+  public post<T extends RegExp>(path: T, handler: Handler<Params>): void {
     this.#worktop.add<T>('POST', path, handler);
   }
 
@@ -36,8 +35,8 @@ export class Router<Res extends ServerResponse, Req extends ServerRequest = Serv
    * @param path Request path or regex.
    * @param handler Request handler.
    */
-  public get<T extends RegExp>(path: T, handler: Handler<Params>): void;
-  public get<T extends string>(path: T, handler: Handler<RouteParams<T>>): void {
+  public get<T extends string>(path: T, handler: Handler<RouteParams<T>>): void;
+  public get<T extends RegExp>(path: T, handler: Handler<Params>): void {
     this.#worktop.add('GET', path, handler);
   }
 
@@ -47,8 +46,8 @@ export class Router<Res extends ServerResponse, Req extends ServerRequest = Serv
    * @param path Request path or regex.
    * @param handler Request handler.
    */
-  public patch<T extends RegExp>(path: T, handler: Handler<Params>): void;
-  public patch<T extends string>(path: T, handler: Handler<RouteParams<T>>): void {
+  public patch<T extends string>(path: T, handler: Handler<RouteParams<T>>): void;
+  public patch<T extends RegExp>(path: T, handler: Handler<Params>): void {
     this.#worktop.add('PATCH', path, handler);
   }
 
@@ -58,8 +57,8 @@ export class Router<Res extends ServerResponse, Req extends ServerRequest = Serv
    * @param path Request path or regex.
    * @param handler Request handler.
    */
-  public put<T extends RegExp>(path: T, handler: Handler<Params>): void;
-  public put<T extends string>(path: T, handler: Handler<RouteParams<T>>): void {
+  public put<T extends string>(path: T, handler: Handler<RouteParams<T>>): void;
+  public put<T extends RegExp>(path: T, handler: Handler<Params>): void {
     this.#worktop.add('PUT', path, handler);
   }
 
@@ -69,8 +68,8 @@ export class Router<Res extends ServerResponse, Req extends ServerRequest = Serv
    * @param path Request path or regex.
    * @param handler Request handler.
    */
-  public delete<T extends RegExp>(path: T, handler: Handler<Params>): void;
-  public delete<T extends string>(path: T, handler: Handler<RouteParams<T>>): void {
+  public delete<T extends string>(path: T, handler: Handler<RouteParams<T>>): void;
+  public delete<T extends RegExp>(path: T, handler: Handler<Params>): void {
     this.#worktop.add('DELETE', path, handler);
   }
 
@@ -91,7 +90,6 @@ export class Router<Res extends ServerResponse, Req extends ServerRequest = Serv
     const data = {
       path: request.path,
       query: request.query.toString(),
-      headers: Object.fromEntries(request.headers),
     };
     if (response.error) {
       error = String(response.error);

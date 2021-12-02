@@ -1,30 +1,33 @@
 const esbuild = require('esbuild');
+const glob = require('tiny-glob');
 
 /**
- * Transpile and build worker from source.
+ * Transpile and build from source.
  */
-async function buildWorker() {
-  /**
-   * @type import("esbuild").BuildOptions
-   */
+async function build() {
+  const entryPoints = await glob('./src/**/!(*.test|*types).ts');
+
+  /** @type import("esbuild").BuildOptions */
   const options = {
     outdir: './dist',
     bundle: true,
-    minify: true,
+    format: 'esm',
+    minify: false,
     sourcemap: false,
     logLevel: 'error',
-    target: 'es2016',
+    target: ['esnext', 'node12'],
+    treeShaking: true,
     platform: 'node',
-    entryPoints: {
-      worker: 'src/index.ts',
-    },
+    entryPoints,
   };
   try {
     await esbuild.build(options);
     console.log(`✅  Build complete => 'dist/index.js'`);
+    process.exit(0);
   } catch (err) {
     console.error(err);
+    process.exit(1);
   }
 }
 
-buildWorker();
+build();

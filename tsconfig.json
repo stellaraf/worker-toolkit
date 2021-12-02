@@ -7,13 +7,16 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "noUnusedLocals": true,
-    "declaration": false,
+    "declaration": true,
+    "lib": ["esnext", "webworker"],
+    "types": ["node"],
     "module": "esnext",
     "target": "esnext",
     "jsx": "react",
     "strict": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "outDir": "dist"
   },
-  "include": ["src/**/*.ts", "./src/global.d.ts"],
-  "exclude": ["node_modules", "esm", "src/**/*.test.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "src/**/*.test.ts"]
 }

@@ -20,7 +20,9 @@ export function withTokenAuth<
     }
     if (token === null) {
       if (isResponseWithSentry(response)) {
-        response.sentry.captureMessage('Missing Authorization header', 'warning');
+        console.debug(
+          'See https://github.com/lukeed/worktop/issues/110, toucan-js cannot be used with worktop',
+        );
       }
       throw new InvalidRequestError('Missing Authorization header', 400);
     }

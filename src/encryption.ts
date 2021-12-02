@@ -58,7 +58,10 @@ export function encrypt(value: string, secret: string): Promise<string> {
     try {
       resolve(_encrypt(value, secret));
     } catch (err) {
-      reject(err);
+      if (err instanceof Error) {
+        reject(err);
+      }
+      reject(Error(`Error encrypting message: '${String(err)}'`));
     }
   });
 }
@@ -78,7 +81,10 @@ export function decrypt(message: string, secret: string): Promise<string> {
     try {
       resolve(_decrypt(message, secret));
     } catch (err) {
-      reject(err);
+      if (err instanceof Error) {
+        reject(err);
+      }
+      reject(Error(`Error decrypting message: '${String(err)}'`));
     }
   });
 }
