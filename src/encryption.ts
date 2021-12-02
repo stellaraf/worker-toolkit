@@ -21,7 +21,7 @@ function _encrypt(value: string, secret: string): string {
   const padding = CryptoJS.pad.Pkcs7;
   const mode = CryptoJS.mode.CBC;
 
-  const encrypted = CryptoJS.AES.encrypt(value, key, { iv, padding, mode });
+  const encrypted = CryptoJS.AES.encrypt(`${value}`, key, { iv, padding, mode });
   const message = `${salt.toString()}${iv.toString()}${encrypted.toString()}`;
   return message;
 }
