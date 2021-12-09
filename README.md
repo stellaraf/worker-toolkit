@@ -23,7 +23,6 @@ npm install @stellaraf/worker-toolkit
 yarn add @stellaraf/worker-toolkit
 
 # PNPM
-
 pnpm add @stellaraf/worker-toolkit
 ```
 

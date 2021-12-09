@@ -9,13 +9,25 @@ export type ErrorHandler<Res extends ServerResponse, Req extends ServerRequest =
   response: Res,
 ) => Promisable<Response>;
 
+export interface RouterOptions<Res extends ServerResponse, Req extends ServerRequest> {
+  prepare?: (req: Req, res: Res) => void;
+  errorHandler?: ErrorHandler<Res, Req>;
+}
+
 export class Router<Res extends ServerResponse, Req extends ServerRequest = ServerRequest> {
   #worktop: InstanceType<typeof WorktopRouter>;
   public add: WorktopRouter['add'];
 
-  constructor() {
+  constructor(options: RouterOptions<Res, Req> = {}) {
     this.#worktop = new WorktopRouter();
     this.add = this.#worktop.add;
+    const { prepare, errorHandler } = options;
+    if (typeof prepare === 'function') {
+      this.#worktop.prepare = prepare;
+    }
+    if (typeof errorHandler === 'function') {
+      this.addErrorHandler(errorHandler);
+    }
   }
 
   /**
