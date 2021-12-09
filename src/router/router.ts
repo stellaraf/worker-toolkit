@@ -1,4 +1,5 @@
-import { Router as WorktopRouter } from 'worktop';
+import { Router as WorktopRouter, listen as WorktopListen } from 'worktop';
+import * as Cache from 'worktop/cache';
 import { JSONResponse } from '../responses';
 
 import type { Promisable } from 'worktop';
@@ -12,21 +13,36 @@ export type ErrorHandler<Res extends ServerResponse, Req extends ServerRequest =
 export interface RouterOptions<Res extends ServerResponse, Req extends ServerRequest> {
   prepare?: (req: Req, res: Res) => void;
   errorHandler?: ErrorHandler<Res, Req>;
+  /** @default true */
+  cacheResponses?: boolean;
 }
 
 export class Router<Res extends ServerResponse, Req extends ServerRequest = ServerRequest> {
   #worktop: InstanceType<typeof WorktopRouter>;
   public add: WorktopRouter['add'];
+  private cacheResponses: boolean;
 
   constructor(options: RouterOptions<Res, Req> = {}) {
     this.#worktop = new WorktopRouter();
     this.add = this.#worktop.add;
-    const { prepare, errorHandler } = options;
+    const { prepare, errorHandler, cacheResponses = true } = options;
     if (typeof prepare === 'function') {
       this.#worktop.prepare = prepare;
     }
     if (typeof errorHandler === 'function') {
       this.addErrorHandler(errorHandler);
+    }
+    this.cacheResponses = cacheResponses;
+  }
+
+  /**
+   * Attach `fetch` event handler.
+   */
+  public attach(): void {
+    if (this.cacheResponses) {
+      Cache.listen(this.#worktop.run);
+    } else {
+      WorktopListen(this.#worktop.run);
     }
   }
 
