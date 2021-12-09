@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import { isToken } from './util';
 import { TokenError } from '../errors';
 
+import type { SignOptions } from 'jsonwebtoken';
 import type { JWTPayload } from './types';
 
 export interface Payload {
@@ -22,6 +23,7 @@ export function createToken<P extends Payload>(
   payload: P,
   key: string,
   expireIn: number = 300,
+  options: SignOptions = {},
 ): string {
   const now = new Date();
   now.setSeconds(now.getSeconds() + expireIn);
@@ -30,7 +32,7 @@ export function createToken<P extends Payload>(
     exp: now.getTime() / 1000,
     ...payload,
   };
-  return jwt.sign(extended, key);
+  return jwt.sign(extended, key, options);
 }
 
 /**

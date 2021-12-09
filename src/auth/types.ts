@@ -24,3 +24,4 @@ export interface JWTPayload {
    */
   iat: number;
 }
+export type { SignOptions as CreateTokenOptions } from 'jsonwebtoken';

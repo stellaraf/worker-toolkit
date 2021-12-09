@@ -19,6 +19,7 @@ async function build() {
     treeShaking: true,
     platform: 'node',
     entryPoints,
+    external: ['worktop'],
   };
   try {
     await esbuild.build(options);
