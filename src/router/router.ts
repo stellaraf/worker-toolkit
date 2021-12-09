@@ -36,9 +36,9 @@ export class Router<Res extends ServerResponse, Req extends ServerRequest = Serv
    * @param path Request path or regex.
    * @param handler Request handler.
    */
-  public post<T extends string>(path: T, handler: Handler<RouteParams<T>>): void;
-  public post<T extends RegExp>(path: T, handler: Handler<Params>): void {
-    this.#worktop.add<T>('POST', path, handler);
+  public post<T extends string>(path: T, handler: Handler<RouteParams<T>, Res>): void;
+  public post<T extends RegExp>(path: T, handler: Handler<Params, Res, Req>): void {
+    this.#worktop.add<T>('POST', path, handler as Handler);
   }
 
   /**
@@ -47,9 +47,9 @@ export class Router<Res extends ServerResponse, Req extends ServerRequest = Serv
    * @param path Request path or regex.
    * @param handler Request handler.
    */
-  public get<T extends string>(path: T, handler: Handler<RouteParams<T>>): void;
-  public get<T extends RegExp>(path: T, handler: Handler<Params>): void {
-    this.#worktop.add('GET', path, handler);
+  public get<T extends string>(path: T, handler: Handler<RouteParams<T>, Res>): void;
+  public get<T extends RegExp>(path: T, handler: Handler<Params, Res, Req>): void {
+    this.#worktop.add('GET', path, handler as Handler);
   }
 
   /**
@@ -58,9 +58,9 @@ export class Router<Res extends ServerResponse, Req extends ServerRequest = Serv
    * @param path Request path or regex.
    * @param handler Request handler.
    */
-  public patch<T extends string>(path: T, handler: Handler<RouteParams<T>>): void;
-  public patch<T extends RegExp>(path: T, handler: Handler<Params>): void {
-    this.#worktop.add('PATCH', path, handler);
+  public patch<T extends string>(path: T, handler: Handler<RouteParams<T>, Res>): void;
+  public patch<T extends RegExp>(path: T, handler: Handler<Params, Res, Req>): void {
+    this.#worktop.add('PATCH', path, handler as Handler);
   }
 
   /**
@@ -69,9 +69,9 @@ export class Router<Res extends ServerResponse, Req extends ServerRequest = Serv
    * @param path Request path or regex.
    * @param handler Request handler.
    */
-  public put<T extends string>(path: T, handler: Handler<RouteParams<T>>): void;
-  public put<T extends RegExp>(path: T, handler: Handler<Params>): void {
-    this.#worktop.add('PUT', path, handler);
+  public put<T extends string>(path: T, handler: Handler<RouteParams<T>, Res>): void;
+  public put<T extends RegExp>(path: T, handler: Handler<Params, Res, Req>): void {
+    this.#worktop.add('PUT', path, handler as Handler);
   }
 
   /**
@@ -80,9 +80,9 @@ export class Router<Res extends ServerResponse, Req extends ServerRequest = Serv
    * @param path Request path or regex.
    * @param handler Request handler.
    */
-  public delete<T extends string>(path: T, handler: Handler<RouteParams<T>>): void;
-  public delete<T extends RegExp>(path: T, handler: Handler<Params>): void {
-    this.#worktop.add('DELETE', path, handler);
+  public delete<T extends string>(path: T, handler: Handler<RouteParams<T>, Res>): void;
+  public delete<T extends RegExp>(path: T, handler: Handler<Params, Res, Req>): void {
+    this.#worktop.add('DELETE', path, handler as Handler);
   }
 
   /**
