@@ -4,7 +4,11 @@
  * @param data Any JSON-able Data.
  * @param status HTTP Status Code.
  */
-export function JSONResponse<T>(data: T, status: number, other?: Omit<ResponseInit, 'status'>) {
+export function JSONResponse<T>(
+  data: T,
+  status: number,
+  other?: Omit<ResponseInit, 'status'>,
+): Response {
   const body = JSON.stringify(data);
   const headers = new Headers({ 'content-type': 'application/json' });
   const init = { status, headers, ...other };
