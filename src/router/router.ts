@@ -1,4 +1,9 @@
-import { Router as WorktopRouter, listen as WorktopListen } from 'worktop';
+import {
+  Router as WorktopRouter,
+  listen as WorktopListen,
+  reply as WorktopReply,
+  FetchHandler,
+} from 'worktop';
 import * as Cache from 'worktop/cache';
 import { JSONResponse } from '../responses';
 
@@ -44,6 +49,16 @@ export class Router<Res extends ServerResponse, Req extends ServerRequest = Serv
     } else {
       WorktopListen(this.#worktop.run);
     }
+  }
+
+  /**
+   * Get a `FetchHandler` for Cloudflare ESM workers.
+   */
+  public handler(): FetchHandler {
+    if (this.cacheResponses) {
+      return Cache.reply(this.#worktop.run);
+    }
+    return WorktopReply(this.#worktop.run);
   }
 
   /**
