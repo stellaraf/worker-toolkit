@@ -1,6 +1,6 @@
 {
   "name": "@stellaraf/worker-toolkit",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Toolkit for use with Cloudflare workers",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
