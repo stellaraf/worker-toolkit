@@ -1,6 +1,6 @@
 {
   "name": "@stellaraf/worker-toolkit",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Toolkit for use with Cloudflare workers",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
@@ -32,7 +32,6 @@
     "@cloudflare/workers-types": "^3.2.0",
     "@types/crypto-js": "^4.0.2",
     "@types/jest": "^27.0.3",
-    "@types/jsonwebtoken": "^8.5.6",
     "@types/node": "^16.11.11",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
@@ -54,6 +53,6 @@
   },
   "dependencies": {
     "crypto-js": "^4.0.2",
-    "jsonwebtoken": "^8.5.1"
+    "njwt": "^1.2.0"
   }
 }

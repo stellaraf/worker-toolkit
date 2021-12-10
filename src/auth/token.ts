@@ -1,15 +1,15 @@
-import jwt from 'jsonwebtoken';
+import { create, verify } from 'njwt';
 import { isToken } from './util';
 import { TokenError } from '../errors';
 
-import type { SignOptions } from 'jsonwebtoken';
+import type { SupportedAlgorithms } from 'njwt';
 import type { JWTPayload } from './types';
 
-export interface Payload {
+export type Payload = {
   iss: string;
   sub: string;
   aud: string;
-}
+};
 
 /**
  * Create a JWT token.
@@ -17,13 +17,14 @@ export interface Payload {
  * @param payload JWT Payload.
  * @param key JWT Secret/Key.
  * @param expireIn Number of seconds in which key expires (default `300`).
+ * @param algorithm JWT signing algorithm.
  * @returns JWT token string.
  */
 export function createToken<P extends Payload>(
   payload: P,
   key: string,
   expireIn: number = 300,
-  options: SignOptions = {},
+  algorithm: SupportedAlgorithms = 'HS256',
 ): string {
   const now = new Date();
   now.setSeconds(now.getSeconds() + expireIn);
@@ -32,17 +33,21 @@ export function createToken<P extends Payload>(
     exp: now.getTime() / 1000,
     ...payload,
   };
-  return jwt.sign(extended, key, options);
+
+  return create(extended, key, algorithm).compact();
 }
 
 /**
  * Verify a JWT token string.
+ *
+ * @param token JWT token string.
+ * @param key Signing key.
  */
 export function verifyToken<P extends JWTPayload>(token: string, key: string): P {
   try {
-    const verified = jwt.verify(token, key);
-    if (isToken<P>(verified)) {
-      return verified;
+    const { body } = verify(token, key) ?? {};
+    if (isToken<P>(body)) {
+      return body;
     }
     throw new TokenError('Token was valid, but token payload was invalid', 400);
   } catch (data) {
