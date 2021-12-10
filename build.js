@@ -18,31 +18,48 @@ function getExternals() {
   );
 }
 
+/** @type import("esbuild").BuildOptions */
+const common = {
+  outdir: './dist',
+  bundle: true,
+  minify: false,
+  sourcemap: false,
+  logLevel: 'error',
+  target: 'node12',
+  treeShaking: true,
+  platform: 'node',
+};
+
 /**
  * Transpile and build from source.
  */
-async function build() {
+async function buildESM() {
   const entryPoints = await glob('./src/**/!(*.test|*types).ts');
   const external = getExternals();
-
-  /** @type import("esbuild").BuildOptions */
-  const options = {
-    outdir: './dist',
+  await esbuild.build({
     format: 'esm',
-    bundle: true,
-    minify: false,
-    sourcemap: false,
-    logLevel: 'error',
-    target: 'node12',
-    treeShaking: true,
-    platform: 'node',
-    entryPoints,
     external,
-  };
+    entryPoints,
+    outExtension: { '.js': '.mjs' },
+    ...common,
+  });
+  console.log(`✅  ESM Build complete`);
+}
+
+/**
+ * Transpile and build from source.
+ */
+async function buildCJS() {
+  const entryPoints = await glob('./src/**/!(*.test|*types).ts');
+  const external = getExternals();
+  await esbuild.build({ format: 'cjs', entryPoints, external, ...common });
+  console.log(`✅  CJS Build complete`);
+}
+
+async function build() {
   try {
-    await esbuild.build(options);
-    console.log(`✅  Build complete`);
-    process.exit(0);
+    await buildESM();
+    await buildCJS();
   } catch (err) {
     console.error(err);
     process.exit(1);
