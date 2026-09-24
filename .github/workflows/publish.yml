@@ -16,7 +16,7 @@ jobs:
       - name: Setup pinned pnpm
         uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1
         with:
-          version: 6.35.1
+          version: 7.33.7
       - name: Resolve dependency cache
         id: ci-pnpm-cache
         shell: bash
@@ -43,11 +43,11 @@ jobs:
           region: us-west-1
           bucket: stellaraf-public-ci-961341522852-us-west-1
           path: ${{ steps.ci-pnpm-cache.outputs.path }}
-          key: cache/${{ github.repository }}/${{ github.ref }}/pnpm-6.35.1/${{ runner.os }}/${{ runner.arch }}/${{ steps.ci-pnpm-cache.outputs.node }}/${{ 
+          key: cache/${{ github.repository }}/${{ github.ref }}/pnpm-7.33.7/${{ runner.os }}/${{ runner.arch }}/${{ steps.ci-pnpm-cache.outputs.node }}/${{ 
             hashFiles('pnpm-lock.yaml') }}
           use-fallback: false
       - name: Install
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Build
         run: pnpm build
