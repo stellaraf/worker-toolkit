@@ -13,26 +13,49 @@ on:
 
 jobs:
   test:
-    name: Node.js v16
-    runs-on: ubuntu-latest
+    name: Node.js v22
+    runs-on: codebuild-stellaraf-actions-public-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 22
 
-      - name: (env) pnpm
-        run: curl -L https://pnpm.js.org/pnpm.js | node - add --global pnpm
-
-      - name: (env) cache
-        uses: actions/cache@v2
+      - name: Setup pinned pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1
         with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ matrix.nodejs }}-${{ hashFiles('**/package.json') }}
-          restore-keys: ${{ runner.os }}-${{ matrix.nodejs }}-
-
+          version: 7.33.7
+      - name: Resolve dependency cache
+        id: ci-pnpm-cache
+        shell: bash
+        run: |
+          echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+          echo "node=$(node --version)" >> "$GITHUB_OUTPUT"
+      - name: Export temporary AWS cache credentials
+        shell: bash
+        run: |
+          python3 - <<'PYTHON'
+          import json, os, subprocess
+          credentials = json.loads(subprocess.check_output(['aws', 'configure', 'export-credentials', '--format', 'process']))
+          with open(os.environ['GITHUB_ENV'], 'a') as output:
+              for source, target in [('AccessKeyId', 'AWS_ACCESS_KEY_ID'), ('SecretAccessKey', 'AWS_SECRET_ACCESS_KEY'), ('SessionToken', 'AWS_SESSION_TOKEN')]:
+                  value = credentials[source]
+                  if not value or '\n' in value or '\r' in value:
+                      raise RuntimeError('Invalid temporary credential value')
+                  print('::add-mask::' + value)
+                  output.write(target + '=' + value + '\n')
+          PYTHON
+      - name: Restore pnpm download store from S3
+        uses: tespkg/actions-cache@e07e2d4953dc8c020d447363e5064e36d04f3cf9
+        with:
+          region: us-west-1
+          bucket: stellaraf-public-ci-961341522852-us-west-1
+          path: ${{ steps.ci-pnpm-cache.outputs.path }}
+          key: cache/${{ github.repository }}/${{ github.ref }}/pnpm-7.33.7/${{ runner.os }}/${{ runner.arch }}/${{ steps.ci-pnpm-cache.outputs.node }}/${{ 
+            hashFiles('pnpm-lock.yaml') }}
+          use-fallback: false
       - name: Install
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Compiles
         run: pnpm run build
@@ -41,4 +64,4 @@ jobs:
         run: pnpm run typecheck
 
       - name: Run Tests
-        run: pnpm test
+        run: pnpm exec jest --runInBand
