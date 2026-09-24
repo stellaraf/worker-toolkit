@@ -5,13 +5,13 @@ on:
 
 jobs:
   publish:
-    name: Node.js v16
+    name: Node.js v22
     runs-on: codebuild-stellaraf-actions-public-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 22
 
       - name: Setup pinned pnpm
         uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1
