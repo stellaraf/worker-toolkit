@@ -64,4 +64,4 @@ jobs:
         run: pnpm run typecheck
 
       - name: Run Tests
-        run: pnpm test --runInBand
+        run: pnpm exec jest --runInBand
